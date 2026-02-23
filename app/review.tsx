@@ -21,6 +21,7 @@ import { MacroInput } from "../components/ui/MacroInput";
 import { MEAL_ICONS } from "../constants/meals";
 import { analyzeImage } from "../services/gemini";
 import { useFoodStore } from "../store/useFoodStore";
+import { ReviewFormSchema } from "../types/food";
 
 export default function ReviewScreen() {
   const router = useRouter();
@@ -120,26 +121,30 @@ export default function ReviewScreen() {
   }
 
   const validate = () => {
-    const newErrors: typeof errors = {};
+    const result = ReviewFormSchema.safeParse({
+      name: tempEntry.name ?? '',
+      calories: rawValues.calories,
+      weight: rawValues.weight,
+      protein: rawValues.protein,
+      carbs: rawValues.carbs,
+      fats: rawValues.fats,
+    });
 
-    if (!tempEntry.name?.trim()) {
-      newErrors.name = "This field cannot be empty";
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        name: fieldErrors.name?.[0],
+        calories: fieldErrors.calories?.[0],
+        weight: fieldErrors.weight?.[0],
+        protein: fieldErrors.protein?.[0],
+        carbs: fieldErrors.carbs?.[0],
+        fats: fieldErrors.fats?.[0],
+      });
+      return false;
     }
 
-    const numericFields = ['calories', 'weight', 'protein', 'carbs', 'fats'] as const;
-    for (const field of numericFields) {
-      const raw = rawValues[field];
-      if (raw === '' || raw === undefined) {
-        newErrors[field] = "This field cannot be empty";
-      } else if (isNaN(Number(raw))) {
-        newErrors[field] = "Please enter a valid number";
-      } else if ((field === 'calories' || field === 'weight') && Number(raw) <= 0) {
-        newErrors[field] = "Must be greater than 0";
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors({});
+    return true;
   };
 
   const handleSave = () => {

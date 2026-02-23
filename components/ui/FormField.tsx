@@ -9,6 +9,7 @@ interface FormFieldProps {
   suffix?: string;
   placeholder?: string;
   className?: string;
+  fieldClassName?: string;
   inputClassName?: string;
   error?: string;
 }
@@ -21,6 +22,7 @@ export function FormField({
   suffix,
   placeholder,
   className = "",
+  fieldClassName,
   inputClassName = "",
   error,
 }: FormFieldProps) {
@@ -35,9 +37,16 @@ export function FormField({
     />
   );
 
+  const baseFieldClass = fieldClassName ?? "bg-dark-surface p-4 rounded-2xl";
+  const borderClass = error
+    ? "border border-red-500"
+    : fieldClassName
+      ? "border-0"
+      : "border border-dark-border";
+
   return (
     <View className={className}>
-      <View className={`bg-dark-surface p-4 rounded-2xl border ${error ? "border-red-500" : "border-dark-border"}`}>
+      <View className={`${baseFieldClass} ${borderClass}`}>
         {label && (
           <Text className="text-text-muted text-xs font-bold uppercase mb-1">
             {label}
