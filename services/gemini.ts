@@ -1,10 +1,11 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { EncodingType, readAsStringAsync } from "expo-file-system/legacy";
+import { GeminiResponse, GeminiResponseSchema } from "../types/food";
 
 const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY!;
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-export const analyzeImage = async (imageUri: string) => {
+export const analyzeImage = async (imageUri: string): Promise<GeminiResponse> => {
   try {
     const base64 = await readAsStringAsync(imageUri, {
       encoding: EncodingType.Base64,
@@ -37,7 +38,8 @@ export const analyzeImage = async (imageUri: string) => {
     // Sometimes Gemini wraps response in ```json ... ```
     const cleanJson = responseText.replace(/```json|```/g, "").trim();
 
-    return JSON.parse(cleanJson);
+    const parsed = JSON.parse(cleanJson);
+    return GeminiResponseSchema.parse(parsed);
   } catch (error) {
     console.error("Error analyzing image:", error);
     throw error;

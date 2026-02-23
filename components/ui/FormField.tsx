@@ -9,7 +9,9 @@ interface FormFieldProps {
   suffix?: string;
   placeholder?: string;
   className?: string;
+  fieldClassName?: string;
   inputClassName?: string;
+  error?: string;
 }
 
 export function FormField({
@@ -20,7 +22,9 @@ export function FormField({
   suffix,
   placeholder,
   className = "",
+  fieldClassName,
   inputClassName = "",
+  error,
 }: FormFieldProps) {
   const input = (
     <TextInput
@@ -33,20 +37,32 @@ export function FormField({
     />
   );
 
+  const baseFieldClass = fieldClassName ?? "bg-dark-surface p-4 rounded-2xl";
+  const borderClass = error
+    ? "border border-red-500"
+    : fieldClassName
+      ? "border-0"
+      : "border border-dark-border";
+
   return (
-    <View className={`bg-dark-surface p-4 rounded-2xl border border-dark-border ${className}`}>
-      {label && (
-        <Text className="text-text-muted text-xs font-bold uppercase mb-1">
-          {label}
-        </Text>
-      )}
-      {suffix ? (
-        <View className="flex-row items-center">
-          {input}
-          <Text className="text-text-muted text-sm ml-2">{suffix}</Text>
-        </View>
-      ) : (
-        input
+    <View className={className}>
+      <View className={`${baseFieldClass} ${borderClass}`}>
+        {label && (
+          <Text className="text-text-muted text-xs font-bold uppercase mb-1">
+            {label}
+          </Text>
+        )}
+        {suffix ? (
+          <View className="flex-row items-center">
+            {input}
+            <Text className="text-text-muted text-sm ml-2">{suffix}</Text>
+          </View>
+        ) : (
+          input
+        )}
+      </View>
+      {error && (
+        <Text className="text-red-500 text-xs mt-1">{error}</Text>
       )}
     </View>
   );
