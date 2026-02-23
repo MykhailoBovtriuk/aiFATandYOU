@@ -102,8 +102,14 @@ export default function ReviewScreen() {
           fats: data.fats?.toString() ?? '0',
         });
         setLocalImageUri(uri);
-      } catch {
-        Alert.alert("Error", "Could not analyze food.");
+      } catch (error) {
+        router.push({
+          pathname: '/error' as any,
+          params: {
+            message: 'Could not analyze food.',
+            response: error instanceof Error ? error.message : String(error),
+          },
+        });
       } finally {
         setScanning(false);
       }

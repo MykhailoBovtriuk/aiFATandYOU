@@ -1,4 +1,4 @@
-import { View, ActivityIndicator, Text, Alert, TouchableOpacity } from 'react-native';
+import { View, ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import { useCameraScan } from '../../hooks/useCameraScan';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
@@ -24,7 +24,13 @@ export default function CameraTab() {
       setTempEntry({ ...data, mealType });
       router.push({ pathname: '/review', params: { imageUri: asset.localUri! } });
     } catch (e: any) {
-      Alert.alert('Gemini ✗', e?.message ?? String(e));
+      router.push({
+        pathname: '/error' as any,
+        params: {
+          message: 'Could not connect to Gemini.',
+          response: e?.message ?? String(e),
+        },
+      });
     } finally {
       setTesting(false);
     }

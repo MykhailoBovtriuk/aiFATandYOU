@@ -49,7 +49,13 @@ export function useCameraScan() {
         });
         router.push({ pathname: '/review', params: { imageUri: uri, ...(date && { date }) } });
       } catch (error) {
-        Alert.alert('Error', 'Could not analyze food.');
+        router.push({
+          pathname: '/error' as any,
+          params: {
+            message: 'Could not analyze food.',
+            response: error instanceof Error ? error.message : String(error),
+          },
+        });
       } finally {
         setLoading(false);
       }
