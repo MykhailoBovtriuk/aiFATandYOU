@@ -1,15 +1,18 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Platform, ScrollView, View, useWindowDimensions } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MealSection } from "../../components/MealSection";
 import { TodayCard } from "../../components/TodayCard";
 import { WebSidebar } from "../../components/WebSidebar";
 import { MEAL_ORDER, createEmptyEntry } from "../../constants/meals";
 import { useActiveMealPeriod } from "../../hooks/useActiveMealPeriod";
+import { useEditEntry } from "../../hooks/useEditEntry";
 import { useExpandedMeals } from "../../hooks/useExpandedMeals";
+import { useIsWebDesktop } from "../../hooks/useIsWebDesktop";
 import { useFoodStore } from "../../store/useFoodStore";
 import { FoodEntry } from "../../types/food";
+import { groupEntriesByMeal } from "../../utils/food";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -25,23 +28,14 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { expandedMeals, toggleMeal } = useExpandedMeals(activeMealType);
 
-  const { width } = useWindowDimensions();
-  const isWebDesktop = Platform.OS === "web" && width >= 1024;
+  const isWebDesktop = useIsWebDesktop();
 
   const caloriesPerDate = getCaloriesPerDate();
 
   const dateEntries = getEntriesForDate(selectedDate);
   const datesWithEntries = getDatesWithEntries();
 
-  const groupedEntries = dateEntries.reduce(
-    (acc, entry) => {
-      const meal = entry.mealType;
-      if (!acc[meal]) acc[meal] = [];
-      acc[meal].push(entry);
-      return acc;
-    },
-    {} as Record<string, FoodEntry[]>,
-  );
+  const groupedEntries = groupEntriesByMeal(dateEntries);
 
   const totals = dateEntries.reduce(
     (acc, item) => ({
@@ -53,10 +47,7 @@ export default function Dashboard() {
     { calories: 0, protein: 0, carbs: 0, fats: 0 },
   );
 
-  const handleEditEntry = (entry: FoodEntry) => {
-    setTempEntry(entry);
-    router.push({ pathname: "/review", params: { entryId: entry.id } });
-  };
+  const handleEditEntry = useEditEntry();
 
   return (
     <View className="flex-1 bg-dark-bg">

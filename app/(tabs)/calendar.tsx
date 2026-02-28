@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -7,10 +7,13 @@ import { MealSection } from '../../components/MealSection';
 import { Colors } from '../../constants/colors';
 import { MEAL_ORDER, createEmptyEntry } from '../../constants/meals';
 import { useActiveMealPeriod } from '../../hooks/useActiveMealPeriod';
+import { useEditEntry } from '../../hooks/useEditEntry';
 import { useExpandedMeals } from '../../hooks/useExpandedMeals';
+import { useIsWebDesktop } from '../../hooks/useIsWebDesktop';
 import { useFoodStore } from '../../store/useFoodStore';
 import { FoodEntry } from '../../types/food';
 import { toLocalISODate } from '../../utils/dates';
+import { getDayBorderColor, groupEntriesByMeal } from '../../utils/food';
 
 export default function CalendarScreen() {
   const router = useRouter();
@@ -25,8 +28,7 @@ export default function CalendarScreen() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { expandedMeals, toggleMeal } = useExpandedMeals(activeMealType);
 
-  const { width } = useWindowDimensions();
-  const isWebDesktop = Platform.OS === 'web' && width >= 1024;
+  const isWebDesktop = useIsWebDesktop();
 
   const todayISO = toLocalISODate(new Date());
   const selectedISO = toLocalISODate(selectedDate);
@@ -34,20 +36,9 @@ export default function CalendarScreen() {
 
   const dateEntries = getEntriesForDate(selectedDate);
 
-  const groupedEntries = dateEntries.reduce(
-    (acc, entry) => {
-      const meal = entry.mealType;
-      if (!acc[meal]) acc[meal] = [];
-      acc[meal].push(entry);
-      return acc;
-    },
-    {} as Record<string, FoodEntry[]>,
-  );
+  const groupedEntries = groupEntriesByMeal(dateEntries);
 
-  const handleEditEntry = (entry: FoodEntry) => {
-    setTempEntry(entry);
-    router.push({ pathname: '/review', params: { entryId: entry.id } });
-  };
+  const handleEditEntry = useEditEntry();
 
   return (
     <View className="flex-1 bg-dark-bg">
@@ -97,16 +88,8 @@ export default function CalendarScreen() {
                   const hasData = date.dateString in caloriesPerDate;
                   const isOverLimit = calories > calorieLimit;
 
-                  let borderColor: string = Colors.darkBorder;
+                  const borderColor = getDayBorderColor(isPast && !isOtherMonth, isToday && !isOtherMonth, hasData, isOverLimit);
                   const borderWidth = 1;
-
-                  if (!isOtherMonth) {
-                    if (isPast) {
-                      borderColor = !hasData || isOverLimit ? Colors.error : Colors.accentGreen;
-                    } else if (isToday) {
-                      borderColor = hasData && isOverLimit ? Colors.error : Colors.accentGreen;
-                    }
-                  }
 
                   return (
                     <TouchableOpacity

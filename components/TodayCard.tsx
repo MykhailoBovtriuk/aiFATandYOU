@@ -1,4 +1,5 @@
-import { Platform, Text, View, useWindowDimensions } from "react-native";
+import { Text, View } from "react-native";
+import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
 import { WeekCalendarStrip } from "./WeekCalendarStrip";
 
 interface TodayCardProps {
@@ -37,8 +38,7 @@ export function TodayCard({
   carbs,
   fats,
 }: TodayCardProps) {
-  const { width } = useWindowDimensions();
-  const hideMacros = Platform.OS === "web" && width >= 1024;
+  const hideMacros = useIsWebDesktop();
 
   const isToday = selectedDate.toDateString() === new Date().toDateString();
   const title = isToday

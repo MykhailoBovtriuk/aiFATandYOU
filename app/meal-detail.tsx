@@ -1,10 +1,10 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MealIcon } from "../components/MealIcon";
 import { AppButton } from "../components/ui/AppButton";
 import { Colors } from "../constants/colors";
-import { MEAL_ICONS, createEmptyEntry } from "../constants/meals";
+import { createEmptyEntry } from "../constants/meals";
 import { useCameraScan } from "../hooks/useCameraScan";
 import { FoodEntry } from "../types/food";
 import { useFoodStore } from "../store/useFoodStore";
@@ -31,12 +31,7 @@ export default function MealDetailScreen() {
           <View style={{ width: 52 }} />
 
           <View className="flex-row items-center">
-            {MEAL_ICONS[meal] &&
-              React.createElement(MEAL_ICONS[meal], {
-                width: 28,
-                height: 28,
-                style: { marginRight: 6 },
-              })}
+            <MealIcon mealType={meal} size={28} style={{ marginRight: 6 }} />
             <Text className="text-text-primary text-lg font-bold">{meal}</Text>
           </View>
 

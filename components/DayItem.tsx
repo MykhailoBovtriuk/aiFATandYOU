@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../constants/colors";
 import { useFoodStore } from "../store/useFoodStore";
+import { getDayBorderColor } from "../utils/food";
 
 interface DayItemProps {
   label: string;
@@ -27,14 +28,8 @@ export function DayItem({
   const calorieLimit = useFoodStore((s) => s.calorieLimit);
   const isOverLimit = calories > calorieLimit;
 
-  let borderColor: string = Colors.textMuted;
-  let borderWidth = isSelected ? 3 : 1;
-
-  if (isPast) {
-    borderColor = !hasData || isOverLimit ? Colors.error : Colors.accentGreen;
-  } else if (isToday) {
-    borderColor = hasData && isOverLimit ? Colors.error : Colors.accentGreen;
-  }
+  const borderColor = getDayBorderColor(isPast, isToday, hasData, isOverLimit, Colors.textMuted);
+  const borderWidth = isSelected ? 3 : 1;
 
   return (
     <TouchableOpacity onPress={onPress} className="items-center">

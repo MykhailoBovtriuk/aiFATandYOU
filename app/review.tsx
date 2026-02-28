@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -12,14 +12,14 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MealIcon } from "../components/MealIcon";
 import { AppButton } from "../components/ui/AppButton";
 import { FormField } from "../components/ui/FormField";
 import { MacroInput } from "../components/ui/MacroInput";
-import { MEAL_ICONS } from "../constants/meals";
+import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
 import { analyzeImage } from "../services/gemini";
 import { useFoodStore } from "../store/useFoodStore";
 import { NavSidebar } from "../components/NavSidebar";
@@ -44,8 +44,7 @@ export default function ReviewScreen() {
     deleteEntry,
   } = useFoodStore();
   const isEditMode = !!entryId;
-  const { width } = useWindowDimensions();
-  const isWebDesktop = Platform.OS === "web" && width >= 1024;
+  const isWebDesktop = useIsWebDesktop();
   const [localImageUri, setLocalImageUri] = useState<string | undefined>(
     imageUriParam,
   );
@@ -327,12 +326,9 @@ export default function ReviewScreen() {
                 <View className="flex-row justify-between items-center p-4 border-b border-dark-border">
                   <View style={{ width: 60 }} />
                   <View className="flex-row items-center gap-2">
-                    {tempEntry.mealType &&
-                      MEAL_ICONS[tempEntry.mealType] &&
-                      React.createElement(MEAL_ICONS[tempEntry.mealType], {
-                        width: 28,
-                        height: 28,
-                      })}
+                    {tempEntry.mealType && (
+                      <MealIcon mealType={tempEntry.mealType} size={28} />
+                    )}
                     <Text className="text-text-primary text-lg font-bold">
                       {tempEntry.mealType ?? "Review Food"}
                     </Text>
@@ -357,12 +353,9 @@ export default function ReviewScreen() {
                 <Text className="text-red-500 text-lg">Cancel</Text>
               </TouchableOpacity>
               <View className="flex-row items-center gap-2">
-                {tempEntry.mealType &&
-                  MEAL_ICONS[tempEntry.mealType] &&
-                  React.createElement(MEAL_ICONS[tempEntry.mealType], {
-                    width: 28,
-                    height: 28,
-                  })}
+                {tempEntry.mealType && (
+                  <MealIcon mealType={tempEntry.mealType} size={28} />
+                )}
                 <Text className="text-text-primary text-lg font-bold">
                   {tempEntry.mealType ?? "Review Food"}
                 </Text>
