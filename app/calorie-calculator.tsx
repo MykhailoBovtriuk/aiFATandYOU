@@ -8,12 +8,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavSidebar } from "../components/NavSidebar";
 import { AppButton } from "../components/ui/AppButton";
+import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
 import { FormField } from "../components/ui/FormField";
 import { SectionLabel } from "../components/ui/SectionLabel";
 import { SegmentedControl } from "../components/ui/SegmentedControl";
@@ -51,8 +51,7 @@ const GOAL_LABELS: Record<Goal, string> = {
 export default function CalorieCalculatorScreen() {
   const router = useRouter();
   const { setCalorieLimit } = useFoodStore();
-  const { width } = useWindowDimensions();
-  const isWebDesktop = Platform.OS === "web" && width >= 1024;
+  const isWebDesktop = useIsWebDesktop();
 
   const [gender, setGender] = useState<Gender>("male");
   const [age, setAge] = useState("");

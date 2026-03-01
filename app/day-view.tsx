@@ -6,33 +6,23 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MealSection } from '../components/MealSection';
 import { Colors } from '../constants/colors';
 import { MEAL_ORDER } from '../constants/meals';
+import { useEditEntry } from '../hooks/useEditEntry';
 import { useFoodStore } from '../store/useFoodStore';
-import { FoodEntry } from '../types/food';
 import { formatDate } from '../utils/dates';
+import { groupEntriesByMeal } from '../utils/food';
 
 export default function DayViewScreen() {
   const router = useRouter();
   const { date } = useLocalSearchParams<{ date: string }>();
-  const { getEntriesForDate, deleteEntry, setTempEntry } = useFoodStore();
+  const { getEntriesForDate, deleteEntry } = useFoodStore();
 
   const dateEntries = date ? getEntriesForDate(new Date(date.replace(/-/g, '/'))) : [];
 
-  const groupedEntries = dateEntries.reduce(
-    (acc, entry) => {
-      const meal = entry.mealType;
-      if (!acc[meal]) acc[meal] = [];
-      acc[meal].push(entry);
-      return acc;
-    },
-    {} as Record<string, FoodEntry[]>
-  );
+  const groupedEntries = groupEntriesByMeal(dateEntries);
 
   const { expandedMeals, toggleMeal } = useExpandedMeals();
 
-  const handleEditEntry = (entry: FoodEntry) => {
-    setTempEntry(entry);
-    router.push({ pathname: '/review', params: { entryId: entry.id } });
-  };
+  const handleEditEntry = useEditEntry();
 
   return (
     <View className="flex-1 bg-dark-bg">

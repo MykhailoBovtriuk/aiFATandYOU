@@ -1,10 +1,9 @@
 import * as Haptics from "expo-haptics";
-import React from "react";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "../constants/colors";
-import { MEAL_ICONS } from "../constants/meals";
 import { FoodEntry } from "../types/food";
 import { FoodItemRow } from "./FoodItemRow";
+import { MealIcon } from "./MealIcon";
 
 interface MealSectionProps {
   mealType: string;
@@ -46,12 +45,7 @@ export function MealSection({
         className="flex-row items-center justify-between p-4"
       >
         <View className="flex-row items-center flex-1">
-          {MEAL_ICONS[mealType] &&
-            React.createElement(MEAL_ICONS[mealType], {
-              width: 36,
-              height: 36,
-              style: { marginRight: 8 },
-            })}
+          <MealIcon mealType={mealType} size={36} style={{ marginRight: 8 }} />
           <Text className="text-text-secondary font-bold text-base">
             {mealType}
           </Text>

@@ -1,20 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import {
-  Platform,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavSidebar } from "../components/NavSidebar";
 import { Colors } from "../constants/colors";
+import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { width } = useWindowDimensions();
-  const isWebDesktop = Platform.OS === "web" && width >= 1024;
+  const isWebDesktop = useIsWebDesktop();
 
   if (isWebDesktop) {
     return (
