@@ -130,7 +130,7 @@ export default function CalorieCalculatorScreen() {
       {result !== null && (
         <View
           className="bg-dark-card rounded-[14px] p-5 items-center mt-4 border"
-          style={{ borderColor: "#28955640" }}
+          style={{ borderColor: Colors.accentGreen + "40" }}
         >
           <Text className="text-text-secondary text-[13px] mb-1">Daily Calorie Goal</Text>
           <TextInput

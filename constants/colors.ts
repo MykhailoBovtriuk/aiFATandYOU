@@ -4,6 +4,7 @@ export const Colors = {
   darkSurface: "#1E222B",
   darkBorder: "#2C303A",
   accentGreen: "#289556",
+  accentBlue: "#3B82F6",
   textPrimary: "#FFFFFF",
   textSecondary: "#9CA3AF",
   textMuted: "#A0A5B1",
