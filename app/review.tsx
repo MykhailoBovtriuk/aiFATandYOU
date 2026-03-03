@@ -15,15 +15,15 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MealIcon } from "../components/MealIcon";
-import { AppButton } from "../components/ui/AppButton";
-import { FormField } from "../components/ui/FormField";
-import { MacroInput } from "../components/ui/MacroInput";
-import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
-import { analyzeImage } from "../services/gemini";
-import { useFoodStore } from "../store/useFoodStore";
-import { NavSidebar } from "../components/NavSidebar";
-import { ReviewFormSchema } from "../types/food";
+import { DesktopPageCard } from "@/components/DesktopPageCard";
+import { ModalHeader } from "@/components/ModalHeader";
+import { AppButton } from "@/components/ui/AppButton";
+import { FormField } from "@/components/ui/FormField";
+import { MacroInput } from "@/components/ui/MacroInput";
+import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
+import { analyzeImage } from "@/services/gemini";
+import { useFoodStore } from "@/store/useFoodStore";
+import { ReviewFormSchema } from "@/types/food";
 
 export default function ReviewScreen() {
   const router = useRouter();
@@ -36,18 +36,10 @@ export default function ReviewScreen() {
     entryId?: string;
     date?: string;
   }>();
-  const {
-    tempEntry,
-    setTempEntry,
-    confirmTempEntry,
-    updateEntry,
-    deleteEntry,
-  } = useFoodStore();
+  const { tempEntry, setTempEntry, confirmTempEntry, updateEntry, deleteEntry } = useFoodStore();
   const isEditMode = !!entryId;
   const isWebDesktop = useIsWebDesktop();
-  const [localImageUri, setLocalImageUri] = useState<string | undefined>(
-    imageUriParam,
-  );
+  const [localImageUri, setLocalImageUri] = useState<string | undefined>(imageUriParam);
   const [scanning, setScanning] = useState(false);
   const [rawValues, setRawValues] = useState({
     calories: tempEntry?.calories?.toString() ?? "0",
@@ -57,17 +49,11 @@ export default function ReviewScreen() {
     fats: tempEntry?.fats?.toString() ?? "0",
   });
   const [errors, setErrors] = useState<
-    Partial<
-      Record<
-        "name" | "calories" | "weight" | "protein" | "carbs" | "fats",
-        string
-      >
-    >
+    Partial<Record<"name" | "calories" | "weight" | "protein" | "carbs" | "fats", string>>
   >({});
 
   const handleScan = async () => {
-    if (Platform.OS !== "web")
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     let result: ImagePicker.ImagePickerResult;
     if (Platform.OS === "web") {
@@ -172,8 +158,7 @@ export default function ReviewScreen() {
   const handleSave = () => {
     if (!validate()) return;
 
-    if (Platform.OS !== "web")
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (Platform.OS !== "web") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     if (isEditMode) {
       updateEntry(entryId!, tempEntry);
       router.back();
@@ -191,11 +176,7 @@ export default function ReviewScreen() {
     <>
       {localImageUri && (
         <View className="mb-5 rounded-2xl overflow-hidden">
-          <Image
-            source={{ uri: localImageUri }}
-            className="w-full h-48"
-            resizeMode="cover"
-          />
+          <Image source={{ uri: localImageUri }} className="w-full h-48" resizeMode="cover" />
         </View>
       )}
 
@@ -278,10 +259,7 @@ export default function ReviewScreen() {
         />
       </View>
 
-      <AppButton
-        onPress={handleSave}
-        label={isEditMode ? "Save Changes" : "Add"}
-      />
+      <AppButton onPress={handleSave} label={isEditMode ? "Save Changes" : "Add"} />
 
       {isEditMode && (
         <AppButton
@@ -308,59 +286,30 @@ export default function ReviewScreen() {
         className="flex-1"
       >
         {isWebDesktop ? (
-          // ── Desktop: NavSidebar + vertically-centered card ──
-          <View style={{ flex: 1, flexDirection: "row" }}>
-            <NavSidebar />
-            <View
-              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-            >
-              <View
-                style={{
-                  width: "70%",
-                  maxWidth: 1024,
-                  maxHeight: "90%",
-                  overflow: "hidden",
-                }}
-                className="bg-dark-card rounded-2xl border border-dark-border"
-              >
-                <View className="flex-row justify-between items-center p-4 border-b border-dark-border">
-                  <View style={{ width: 60 }} />
-                  <View className="flex-row items-center gap-2">
-                    {tempEntry.mealType && (
-                      <MealIcon mealType={tempEntry.mealType} size={28} />
-                    )}
-                    <Text className="text-text-primary text-lg font-bold">
-                      {tempEntry.mealType ?? "Review Food"}
-                    </Text>
-                  </View>
-                  <View style={{ width: 26 }} />
-                </View>
-                <ScrollView className="flex-1 p-5">{formFields}</ScrollView>
-              </View>
-            </View>
-          </View>
+          <DesktopPageCard>
+            <ModalHeader
+              title={tempEntry.mealType ?? "Review Food"}
+              mealType={tempEntry.mealType}
+            />
+            <ScrollView className="flex-1 p-5">{formFields}</ScrollView>
+          </DesktopPageCard>
         ) : (
-          // ── Mobile: unchanged ──
           <View style={{ flex: 1 }}>
-            <View className="flex-row justify-between items-center p-4 border-b border-dark-border bg-dark-card">
-              <TouchableOpacity
-                onPress={() => {
-                  if (Platform.OS !== "web")
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  router.back();
-                }}
-              >
-                <Text className="text-red-500 text-lg">Cancel</Text>
-              </TouchableOpacity>
-              <View className="flex-row items-center gap-2">
-                {tempEntry.mealType && (
-                  <MealIcon mealType={tempEntry.mealType} size={28} />
-                )}
-                <Text className="text-text-primary text-lg font-bold">
-                  {tempEntry.mealType ?? "Review Food"}
-                </Text>
-              </View>
-              {!isWebDesktop ? (
+            <ModalHeader
+              title={tempEntry.mealType ?? "Review Food"}
+              mealType={tempEntry.mealType}
+              leftAction={
+                <TouchableOpacity
+                  onPress={() => {
+                    if (Platform.OS !== "web")
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    router.back();
+                  }}
+                >
+                  <Text className="text-red-500 text-lg">Cancel</Text>
+                </TouchableOpacity>
+              }
+              rightAction={
                 <TouchableOpacity onPress={handleScan} disabled={scanning}>
                   {scanning ? (
                     <ActivityIndicator color="#fff" />
@@ -368,10 +317,8 @@ export default function ReviewScreen() {
                     <Ionicons name="camera" size={26} color="#fff" />
                   )}
                 </TouchableOpacity>
-              ) : (
-                <View style={{ width: 26 }} />
-              )}
-            </View>
+              }
+            />
             <ScrollView className="flex-1 p-5">{formFields}</ScrollView>
           </View>
         )}

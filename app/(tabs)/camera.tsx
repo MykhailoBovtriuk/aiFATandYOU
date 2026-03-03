@@ -1,12 +1,12 @@
-import { View, ActivityIndicator, Text, TouchableOpacity } from 'react-native';
-import { useCameraScan } from '../../hooks/useCameraScan';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
-import { Colors } from '../../constants/colors';
-import { Asset } from 'expo-asset';
-import { analyzeImage } from '../../services/gemini';
-import { useFoodStore } from '../../store/useFoodStore';
-import { getMealPeriodFromHour } from '../../utils/dates';
+import { View, ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { useCameraScan } from "@/hooks/useCameraScan";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useRef, useState } from "react";
+import { Colors } from "@/constants/colors";
+import { Asset } from "expo-asset";
+import { analyzeImage } from "@/services/gemini";
+import { useFoodStore } from "@/store/useFoodStore";
+import { getMealPeriodFromHour } from "@/utils/dates";
 
 export default function CameraTab() {
   const { scan, loading } = useCameraScan();
@@ -18,16 +18,16 @@ export default function CameraTab() {
   const handleTest = async () => {
     setTesting(true);
     try {
-      const [asset] = await Asset.loadAsync(require('../../assets/images/ex.jpg'));
+      const [asset] = await Asset.loadAsync(require("../../assets/images/ex.jpg"));
       const data = await analyzeImage(asset.localUri!);
       const mealType = getMealPeriodFromHour(new Date().getHours());
       setTempEntry({ ...data, mealType });
-      router.push({ pathname: '/review', params: { imageUri: asset.localUri! } });
+      router.push({ pathname: "/review", params: { imageUri: asset.localUri! } });
     } catch (e: any) {
       router.push({
-        pathname: '/error' as any,
+        pathname: "/error" as any,
         params: {
-          message: 'Could not connect to Gemini.',
+          message: "Could not connect to Gemini.",
           response: e?.message ?? String(e),
         },
       });
@@ -44,16 +44,16 @@ export default function CameraTab() {
         return;
       }
       scan();
-    }, [scan])
+    }, [scan]),
   );
 
   return (
     <View className="flex-1 bg-dark-bg items-center justify-center">
-      {(loading || testing) ? (
+      {loading || testing ? (
         <>
           <ActivityIndicator size="large" color={Colors.accentGreen} />
           <Text className="text-text-primary mt-3 font-semibold">
-            {testing ? 'Testing connection...' : 'Analyzing food...'}
+            {testing ? "Testing connection..." : "Analyzing food..."}
           </Text>
         </>
       ) : (

@@ -1,13 +1,13 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MealIcon } from "../components/MealIcon";
-import { AppButton } from "../components/ui/AppButton";
-import { Colors } from "../constants/colors";
-import { createEmptyEntry } from "../constants/meals";
-import { useCameraScan } from "../hooks/useCameraScan";
-import { FoodEntry } from "../types/food";
-import { useFoodStore } from "../store/useFoodStore";
+import { ModalHeader } from "@/components/ModalHeader";
+import { AppButton } from "@/components/ui/AppButton";
+import { Colors } from "@/constants/colors";
+import { createEmptyEntry } from "@/constants/meals";
+import { useCameraScan } from "@/hooks/useCameraScan";
+import { FoodEntry } from "@/types/food";
+import { useFoodStore } from "@/store/useFoodStore";
 
 export default function MealDetailScreen() {
   const router = useRouter();
@@ -27,18 +27,15 @@ export default function MealDetailScreen() {
   return (
     <View className="flex-1 bg-dark-bg">
       <SafeAreaView className="flex-1" edges={["bottom"]}>
-        <View className="flex-row justify-between items-center p-4 border-b border-dark-border bg-dark-card">
-          <View style={{ width: 52 }} />
-
-          <View className="flex-row items-center">
-            <MealIcon mealType={meal} size={28} style={{ marginRight: 6 }} />
-            <Text className="text-text-primary text-lg font-bold">{meal}</Text>
-          </View>
-
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text className="text-red-500 text-lg">Cancel</Text>
-          </TouchableOpacity>
-        </View>
+        <ModalHeader
+          title={meal}
+          mealType={meal}
+          rightAction={
+            <TouchableOpacity onPress={() => router.back()}>
+              <Text className="text-red-500 text-lg">Cancel</Text>
+            </TouchableOpacity>
+          }
+        />
 
         <View className="flex-1 items-center justify-center gap-4">
           <AppButton

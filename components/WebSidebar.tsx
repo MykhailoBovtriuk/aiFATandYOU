@@ -1,14 +1,6 @@
 import { Text, View } from "react-native";
-import {
-  Bar,
-  BarChart,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Colors } from "@/constants/colors";
+import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 interface WebSidebarProps {
   calories: number;
@@ -24,13 +16,7 @@ const MACROS = [
   { key: "protein", label: "Protein" },
 ] as const;
 
-export function WebSidebar({
-  calories,
-  protein,
-  carbs,
-  fats,
-  calorieLimit,
-}: WebSidebarProps) {
+export function WebSidebar({ calories, protein, carbs, fats, calorieLimit }: WebSidebarProps) {
   const macroValues = { fats, carbs, protein };
   const maxMacro = Math.max(fats, carbs, protein, 1);
 
@@ -53,9 +39,7 @@ export function WebSidebar({
           <View key={key} className="mb-4">
             <View className="flex-row justify-between mb-1">
               <Text className="text-text-secondary text-sm">{label}</Text>
-              <Text className="text-text-primary text-sm">
-                {Math.round(value)}g
-              </Text>
+              <Text className="text-text-primary text-sm">{Math.round(value)}g</Text>
             </View>
             <ResponsiveContainer width="100%" height={8}>
               <BarChart
@@ -69,9 +53,9 @@ export function WebSidebar({
                 <YAxis type="category" hide />
                 <Bar
                   dataKey="value"
-                  fill="#3B82F6"
+                  fill={Colors.accentBlue}
                   radius={4}
-                  background={{ fill: "#1E222B", rx: 4, ry: 4 }}
+                  background={{ fill: Colors.darkSurface, rx: 4, ry: 4 }}
                   isAnimationActive={false}
                 />
               </BarChart>
@@ -95,7 +79,7 @@ export function WebSidebar({
               stroke="none"
               isAnimationActive={false}
             >
-              <Cell fill="#1E222B" />
+              <Cell fill={Colors.darkSurface} />
             </Pie>
             <Pie
               data={[{ value: progress }, { value: 1 - progress }]}
@@ -107,7 +91,7 @@ export function WebSidebar({
               dataKey="value"
               stroke="none"
             >
-              <Cell fill="#3B82F6" />
+              <Cell fill={Colors.accentBlue} />
               <Cell fill="transparent" />
             </Pie>
           </PieChart>
@@ -121,10 +105,8 @@ export function WebSidebar({
               alignItems: "center",
             }}
           >
-            <Text className="text-white font-bold text-2xl">
-              {Math.round(calories)}
-            </Text>
-            <Text className="text-gray-400 text-xs">{`/ ${calorieLimit} kcal`}</Text>
+            <Text className="text-text-primary font-bold text-2xl">{Math.round(calories)}</Text>
+            <Text className="text-text-secondary text-xs">{`/ ${calorieLimit} kcal`}</Text>
           </View>
         </View>
       </View>

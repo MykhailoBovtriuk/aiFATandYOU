@@ -1,4 +1,4 @@
-import { MEAL_ICONS } from "../constants/meals";
+import { MEAL_ICONS } from "@/constants/meals";
 
 interface MealIconProps {
   mealType: string;

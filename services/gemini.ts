@@ -1,20 +1,21 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { EncodingType, readAsStringAsync } from "expo-file-system/legacy";
 import { Platform } from "react-native";
-import { GeminiResponse, GeminiResponseSchema } from "../types/food";
+import { GeminiResponse, GeminiResponseSchema } from "@/types/food";
 
-const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY!;
+const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+if (!API_KEY) throw new Error("EXPO_PUBLIC_GEMINI_API_KEY is not set. Add it to your .env file.");
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 export const analyzeImage = async (imageUri: string): Promise<GeminiResponse> => {
   try {
     let base64: string;
-    if (Platform.OS === 'web') {
+    if (Platform.OS === "web") {
       const response = await fetch(imageUri);
       const blob = await response.blob();
       base64 = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+        reader.onloadend = () => resolve((reader.result as string).split(",")[1]);
         reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
@@ -58,4 +59,3 @@ export const analyzeImage = async (imageUri: string): Promise<GeminiResponse> =>
     throw error;
   }
 };
-

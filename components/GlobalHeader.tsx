@@ -2,11 +2,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
-import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
+import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Colors } from "../constants/colors";
-import { useMotivationalPhrase } from "../hooks/useMotivationalPhrase";
-import { useFoodStore } from "../store/useFoodStore";
+import { Colors } from "@/constants/colors";
+import { useMotivationalPhrase } from "@/hooks/useMotivationalPhrase";
+import { useFoodStore } from "@/store/useFoodStore";
 
 export function GlobalHeader() {
   const insets = useSafeAreaInsets();
@@ -30,9 +30,7 @@ export function GlobalHeader() {
     >
       <View className="h-14 px-5 flex-row items-center justify-between">
         <TouchableOpacity
-          onPress={() =>
-            isSettings ? router.back() : router.navigate("/(tabs)/calendar")
-          }
+          onPress={() => (isSettings ? router.back() : router.navigate("/(tabs)/calendar"))}
           hitSlop={8}
         >
           <Ionicons
@@ -114,10 +112,7 @@ export function GlobalHeader() {
                   color={Colors.textPrimary}
                   style={{ marginRight: 10 }}
                 />
-                <Text
-                  className="text-[15px]"
-                  style={{ color: Colors.textPrimary }}
-                >
+                <Text className="text-[15px]" style={{ color: Colors.textPrimary }}>
                   Settings
                 </Text>
               </TouchableOpacity>

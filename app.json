@@ -14,9 +14,14 @@
       "backgroundColor": "#0A0A1A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aifatandyou.app",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow aiFATandYOU to access your photo library to scan food."
+      }
     },
     "android": {
+      "package": "com.aifatandyou.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0A0A1A"

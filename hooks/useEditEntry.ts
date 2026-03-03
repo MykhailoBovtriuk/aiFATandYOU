@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
-import { useFoodStore } from "../store/useFoodStore";
-import type { FoodEntry } from "../types/food";
+import { useFoodStore } from "@/store/useFoodStore";
+import type { FoodEntry } from "@/types/food";
 
 export function useEditEntry() {
   const router = useRouter();

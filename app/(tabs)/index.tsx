@@ -2,17 +2,17 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MealSection } from "../../components/MealSection";
-import { TodayCard } from "../../components/TodayCard";
-import { WebSidebar } from "../../components/WebSidebar";
-import { MEAL_ORDER, createEmptyEntry } from "../../constants/meals";
-import { useActiveMealPeriod } from "../../hooks/useActiveMealPeriod";
-import { useEditEntry } from "../../hooks/useEditEntry";
-import { useExpandedMeals } from "../../hooks/useExpandedMeals";
-import { useIsWebDesktop } from "../../hooks/useIsWebDesktop";
-import { useFoodStore } from "../../store/useFoodStore";
-import { FoodEntry } from "../../types/food";
-import { groupEntriesByMeal } from "../../utils/food";
+import { MealList } from "@/components/MealList";
+import { TodayCard } from "@/components/TodayCard";
+import { WebSidebar } from "@/components/WebSidebar";
+import { createEmptyEntry } from "@/constants/meals";
+import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
+import { useEditEntry } from "@/hooks/useEditEntry";
+import { useExpandedMeals } from "@/hooks/useExpandedMeals";
+import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
+import { useFoodStore } from "@/store/useFoodStore";
+import { FoodEntry } from "@/types/food";
+import { groupEntriesByMeal } from "@/utils/food";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -76,38 +76,22 @@ export default function Dashboard() {
                 {...totals}
               />
 
-              {MEAL_ORDER.map((mealType) => {
-                const mealEntries = groupedEntries[mealType] || [];
-                const hasEntries = mealEntries.length > 0;
-
-                return (
-                  <MealSection
-                    key={mealType}
-                    mealType={mealType}
-                    entries={mealEntries}
-                    expanded={hasEntries && (expandedMeals[mealType] ?? true)}
-                    scale={scaleFactors[mealType as keyof typeof scaleFactors]}
-                    onHeaderPress={() => {
-                      if (hasEntries) {
-                        toggleMeal(mealType);
-                      } else {
-                        setTempEntry(
-                          createEmptyEntry(mealType as FoodEntry["mealType"]),
-                        );
-                        router.push({ pathname: "/review" });
-                      }
-                    }}
-                    onAddPress={() => {
-                      setTempEntry(
-                        createEmptyEntry(mealType as FoodEntry["mealType"]),
-                      );
-                      router.push({ pathname: "/review" });
-                    }}
-                    onDeleteEntry={deleteEntry}
-                    onEditEntry={handleEditEntry}
-                  />
-                );
-              })}
+              <MealList
+                groupedEntries={groupedEntries}
+                expandedMeals={expandedMeals}
+                toggleMeal={toggleMeal}
+                onEmptyHeaderPress={(mealType) => {
+                  setTempEntry(createEmptyEntry(mealType as FoodEntry["mealType"]));
+                  router.push({ pathname: "/review" });
+                }}
+                onAddPress={(mealType) => {
+                  setTempEntry(createEmptyEntry(mealType as FoodEntry["mealType"]));
+                  router.push({ pathname: "/review" });
+                }}
+                onDeleteEntry={deleteEntry}
+                onEditEntry={handleEditEntry}
+                scaleFactors={scaleFactors as Record<string, number>}
+              />
 
               <View className="h-6" />
             </ScrollView>

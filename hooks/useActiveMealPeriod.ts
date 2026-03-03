@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMealPeriodFromHour } from "../utils/dates";
+import { getMealPeriodFromHour } from "@/utils/dates";
 
 const MEAL_BOUNDARIES = {
   BREAKFAST_START: 4,
@@ -12,10 +12,7 @@ const SCALE_INACTIVE = 0.97;
 
 type MealType = "Breakfast" | "Lunch" | "Dinner";
 
-function getMillisecondsUntilNextBoundary(
-  currentHour: number,
-  currentMinutes: number,
-): number {
+function getMillisecondsUntilNextBoundary(currentHour: number, currentMinutes: number): number {
   const currentTotalMinutes = currentHour * 60 + currentMinutes;
 
   const boundaries = [
@@ -33,12 +30,12 @@ function getMillisecondsUntilNextBoundary(
   }
 
   const minutesUntilMidnight = 24 * 60 - currentTotalMinutes;
-  const minutesUntilNextBoundary =
-    minutesUntilMidnight + MEAL_BOUNDARIES.BREAKFAST_START * 60;
+  const minutesUntilNextBoundary = minutesUntilMidnight + MEAL_BOUNDARIES.BREAKFAST_START * 60;
   return minutesUntilNextBoundary * 60 * 1000;
 }
 
 interface ScaleFactors {
+  [key: string]: number;
   Breakfast: number;
   Lunch: number;
   Dinner: number;
@@ -59,10 +56,7 @@ export function useActiveMealPeriod(): UseActiveMealPeriodReturn {
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
 
-    const msUntilNextBoundary = getMillisecondsUntilNextBoundary(
-      currentHour,
-      currentMinutes,
-    );
+    const msUntilNextBoundary = getMillisecondsUntilNextBoundary(currentHour, currentMinutes);
 
     const timer = setTimeout(() => {
       setActiveMealType(getMealPeriodFromHour(new Date().getHours()));

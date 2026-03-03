@@ -1,5 +1,5 @@
 import { Text, TextInput, View } from "react-native";
-import { Colors } from "../../constants/colors";
+import { Colors } from "@/constants/colors";
 
 interface FormFieldProps {
   label?: string;
@@ -47,11 +47,7 @@ export function FormField({
   return (
     <View className={className}>
       <View className={`${baseFieldClass} ${borderClass}`}>
-        {label && (
-          <Text className="text-text-muted text-xs font-bold uppercase mb-1">
-            {label}
-          </Text>
-        )}
+        {label && <Text className="text-text-muted text-xs font-bold uppercase mb-1">{label}</Text>}
         {suffix ? (
           <View className="flex-row items-center">
             {input}
@@ -61,9 +57,7 @@ export function FormField({
           input
         )}
       </View>
-      {error && (
-        <Text className="text-red-500 text-xs mt-1">{error}</Text>
-      )}
+      {error && <Text className="text-red-500 text-xs mt-1">{error}</Text>}
     </View>
   );
 }

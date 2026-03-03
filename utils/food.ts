@@ -1,5 +1,5 @@
-import { Colors } from "../constants/colors";
-import type { FoodEntry } from "../types/food";
+import { Colors } from "@/constants/colors";
+import type { FoodEntry } from "@/types/food";
 
 export function groupEntriesByMeal(entries: FoodEntry[]): Record<string, FoodEntry[]> {
   return entries.reduce(

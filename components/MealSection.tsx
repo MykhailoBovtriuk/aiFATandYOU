@@ -1,9 +1,9 @@
 import * as Haptics from "expo-haptics";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
-import { Colors } from "../constants/colors";
-import { FoodEntry } from "../types/food";
-import { FoodItemRow } from "./FoodItemRow";
-import { MealIcon } from "./MealIcon";
+import { Colors } from "@/constants/colors";
+import { FoodEntry } from "@/types/food";
+import { FoodItemRow } from "@/components/FoodItemRow";
+import { MealIcon } from "@/components/MealIcon";
 
 interface MealSectionProps {
   mealType: string;
@@ -38,17 +38,14 @@ export function MealSection({
     >
       <TouchableOpacity
         onPress={() => {
-          if (Platform.OS !== "web")
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           onHeaderPress();
         }}
         className="flex-row items-center justify-between p-4"
       >
         <View className="flex-row items-center flex-1">
           <MealIcon mealType={mealType} size={36} style={{ marginRight: 8 }} />
-          <Text className="text-text-secondary font-bold text-base">
-            {mealType}
-          </Text>
+          <Text className="text-text-secondary font-bold text-base">{mealType}</Text>
           {entries.length > 0 && (
             <Text className="text-text-secondary text-sm ml-2">
               {Math.round(totalCalories)} kcal
@@ -58,8 +55,7 @@ export function MealSection({
         <TouchableOpacity
           onPress={(e) => {
             e.stopPropagation?.();
-            if (Platform.OS !== "web")
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             onAddPress();
           }}
           className="w-8 h-8 rounded-full items-center justify-center"
@@ -72,18 +68,10 @@ export function MealSection({
       {expanded && entries.length > 0 && (
         <View className="px-4 pb-4">
           <View className="flex-row justify-between bg-dark-surface rounded-xl p-3 mb-3">
-            <Text className="text-text-muted text-xs">
-              P: {Math.round(totalProtein)}g
-            </Text>
-            <Text className="text-text-muted text-xs">
-              C: {Math.round(totalCarbs)}g
-            </Text>
-            <Text className="text-text-muted text-xs">
-              F: {Math.round(totalFats)}g
-            </Text>
-            <Text className="text-text-muted text-xs">
-              {Math.round(totalCalories)} kcal
-            </Text>
+            <Text className="text-text-muted text-xs">P: {Math.round(totalProtein)}g</Text>
+            <Text className="text-text-muted text-xs">C: {Math.round(totalCarbs)}g</Text>
+            <Text className="text-text-muted text-xs">F: {Math.round(totalFats)}g</Text>
+            <Text className="text-text-muted text-xs">{Math.round(totalCalories)} kcal</Text>
           </View>
 
           {entries.map((entry) => (

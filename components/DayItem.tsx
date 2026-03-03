@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Colors } from "../constants/colors";
-import { useFoodStore } from "../store/useFoodStore";
-import { getDayBorderColor } from "../utils/food";
+import { Colors } from "@/constants/colors";
+import { useFoodStore } from "@/store/useFoodStore";
+import { getDayBorderColor } from "@/utils/food";
 
 interface DayItemProps {
   label: string;
@@ -37,9 +37,7 @@ export function DayItem({
         className="w-10 h-10 rounded-full items-center justify-center"
         style={{ borderWidth, borderColor }}
       >
-        {hasData && isOverLimit && (
-          <Ionicons name="close" size={16} color={Colors.error} />
-        )}
+        {hasData && isOverLimit && <Ionicons name="close" size={16} color={Colors.error} />}
         {hasData && !isOverLimit && (
           <Ionicons name="checkmark" size={16} color={Colors.accentGreen} />
         )}
@@ -50,9 +48,7 @@ export function DayItem({
       >
         {label}
       </Text>
-      <Text
-        className={`text-xs text-text-muted ${isSelected ? "font-extrabold" : "font-medium"}`}
-      >
+      <Text className={`text-xs text-text-muted ${isSelected ? "font-extrabold" : "font-medium"}`}>
         {dateNumber}
       </Text>
     </TouchableOpacity>

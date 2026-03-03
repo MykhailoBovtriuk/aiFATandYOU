@@ -1,29 +1,25 @@
-import { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { MealSection } from '../../components/MealSection';
-import { Colors } from '../../constants/colors';
-import { MEAL_ORDER, createEmptyEntry } from '../../constants/meals';
-import { useActiveMealPeriod } from '../../hooks/useActiveMealPeriod';
-import { useEditEntry } from '../../hooks/useEditEntry';
-import { useExpandedMeals } from '../../hooks/useExpandedMeals';
-import { useIsWebDesktop } from '../../hooks/useIsWebDesktop';
-import { useFoodStore } from '../../store/useFoodStore';
-import { FoodEntry } from '../../types/food';
-import { toLocalISODate } from '../../utils/dates';
-import { getDayBorderColor, groupEntriesByMeal } from '../../utils/food';
+import { useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Calendar } from "react-native-calendars";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { CalendarDayCell } from "@/components/CalendarDayCell";
+import { MealList } from "@/components/MealList";
+import { Colors } from "@/constants/colors";
+import { createEmptyEntry } from "@/constants/meals";
+import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
+import { useEditEntry } from "@/hooks/useEditEntry";
+import { useExpandedMeals } from "@/hooks/useExpandedMeals";
+import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
+import { useFoodStore } from "@/store/useFoodStore";
+import { FoodEntry } from "@/types/food";
+import { toLocalISODate } from "@/utils/dates";
+import { groupEntriesByMeal } from "@/utils/food";
 
 export default function CalendarScreen() {
   const router = useRouter();
-  const {
-    getEntriesForDate,
-    deleteEntry,
-    setTempEntry,
-    getCaloriesPerDate,
-    calorieLimit,
-  } = useFoodStore();
+  const { getEntriesForDate, deleteEntry, setTempEntry, getCaloriesPerDate, calorieLimit } =
+    useFoodStore();
   const { activeMealType, scaleFactors } = useActiveMealPeriod();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { expandedMeals, toggleMeal } = useExpandedMeals(activeMealType);
@@ -47,9 +43,9 @@ export default function CalendarScreen() {
           flex: 1,
           ...(isWebDesktop
             ? {
-                flexDirection: 'row',
-                alignSelf: 'center',
-                width: '100%',
+                flexDirection: "row",
+                alignSelf: "center",
+                width: "100%",
                 maxWidth: 1024,
                 gap: 24,
               }
@@ -58,7 +54,7 @@ export default function CalendarScreen() {
       >
         {/* LEFT: Calendar */}
         <View style={{ flex: 1 }}>
-          <SafeAreaView className="flex-1" edges={['bottom']}>
+          <SafeAreaView className="flex-1" edges={["bottom"]}>
             <ScrollView className="px-5 pt-4">
               <Calendar
                 style={{ backgroundColor: Colors.darkBg }}
@@ -68,73 +64,25 @@ export default function CalendarScreen() {
                   textSectionTitleColor: Colors.textSecondary,
                   arrowColor: Colors.textMuted,
                   monthTextColor: Colors.textPrimary,
-                  textMonthFontWeight: 'bold',
+                  textMonthFontWeight: "bold",
                   textMonthFontSize: 16,
-                  textDayHeaderFontWeight: '600',
+                  textDayHeaderFontWeight: "600",
                   textDayHeaderFontSize: 12,
                 }}
                 markedDates={{
                   [selectedISO]: { selected: true, selectedColor: Colors.accentGreen },
                 }}
-                dayComponent={({ date, state, marking }) => {
-                  if (!date) return null;
-
-                  const isOtherMonth = state === 'disabled';
-                  const isToday = date.dateString === todayISO;
-                  const isPast = date.dateString < todayISO;
-                  const isSelected = !!(marking as any)?.selected;
-
-                  const calories = caloriesPerDate[date.dateString] ?? 0;
-                  const hasData = date.dateString in caloriesPerDate;
-                  const isOverLimit = calories > calorieLimit;
-
-                  const borderColor = getDayBorderColor(isPast && !isOtherMonth, isToday && !isOtherMonth, hasData, isOverLimit);
-                  const borderWidth = 1;
-
-                  return (
-                    <TouchableOpacity
-                      onPress={() => !isOtherMonth && setSelectedDate(new Date(date.dateString))}
-                      activeOpacity={0.7}
-                      style={{ alignItems: 'center', paddingVertical: 6 }}
-                    >
-                      <View
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: 20,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderWidth: isOtherMonth ? 0 : borderWidth,
-                          borderColor: isOtherMonth ? 'transparent' : borderColor,
-                          backgroundColor: isSelected ? Colors.accentGreen : 'transparent',
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: isOtherMonth
-                              ? Colors.placeholder
-                              : isSelected
-                                ? Colors.darkBg
-                                : Colors.textPrimary,
-                            fontSize: 14,
-                            fontWeight: '500',
-                          }}
-                        >
-                          {date.day}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          width: 4,
-                          height: 4,
-                          borderRadius: 2,
-                          backgroundColor: isToday ? Colors.textPrimary : 'transparent',
-                          marginTop: 3,
-                        }}
-                      />
-                    </TouchableOpacity>
-                  );
-                }}
+                dayComponent={({ date, state, marking }) => (
+                  <CalendarDayCell
+                    date={date}
+                    state={state}
+                    isSelected={!!(marking as any)?.selected}
+                    todayISO={todayISO}
+                    caloriesPerDate={caloriesPerDate}
+                    calorieLimit={calorieLimit}
+                    onPress={setSelectedDate}
+                  />
+                )}
                 firstDay={1}
                 onDayPress={(day) => setSelectedDate(new Date(day.dateString))}
               />
@@ -147,33 +95,22 @@ export default function CalendarScreen() {
         {isWebDesktop && (
           <View className="px-5 pt-4" style={{ width: 300 }}>
             <ScrollView>
-              {MEAL_ORDER.map((mealType) => {
-                const mealEntries = groupedEntries[mealType] || [];
-                const hasEntries = mealEntries.length > 0;
-                return (
-                  <MealSection
-                    key={mealType}
-                    mealType={mealType}
-                    entries={mealEntries}
-                    expanded={hasEntries && (expandedMeals[mealType] ?? true)}
-                    scale={scaleFactors[mealType as keyof typeof scaleFactors]}
-                    onHeaderPress={() => {
-                      if (hasEntries) {
-                        toggleMeal(mealType);
-                      } else {
-                        setTempEntry(createEmptyEntry(mealType as FoodEntry['mealType']));
-                        router.push({ pathname: '/review' });
-                      }
-                    }}
-                    onAddPress={() => {
-                      setTempEntry(createEmptyEntry(mealType as FoodEntry['mealType']));
-                      router.push({ pathname: '/review' });
-                    }}
-                    onDeleteEntry={deleteEntry}
-                    onEditEntry={handleEditEntry}
-                  />
-                );
-              })}
+              <MealList
+                groupedEntries={groupedEntries}
+                expandedMeals={expandedMeals}
+                toggleMeal={toggleMeal}
+                onEmptyHeaderPress={(mealType) => {
+                  setTempEntry(createEmptyEntry(mealType as FoodEntry["mealType"]));
+                  router.push({ pathname: "/review" });
+                }}
+                onAddPress={(mealType) => {
+                  setTempEntry(createEmptyEntry(mealType as FoodEntry["mealType"]));
+                  router.push({ pathname: "/review" });
+                }}
+                onDeleteEntry={deleteEntry}
+                onEditEntry={handleEditEntry}
+                scaleFactors={scaleFactors as Record<string, number>}
+              />
               <View className="h-6" />
             </ScrollView>
           </View>

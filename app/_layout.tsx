@@ -2,10 +2,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState, useLayoutEffect } from "react";
 import { Platform, View } from "react-native";
-import { useIsWebDesktop } from "../hooks/useIsWebDesktop";
-import { GlobalHeader } from "../components/GlobalHeader";
-import { ErrorBoundaryFallback } from "../components/ErrorBoundaryFallback";
-import { Colors } from "../constants/colors";
+import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
+import { GlobalHeader } from "@/components/GlobalHeader";
+import { ErrorBoundaryFallback } from "@/components/ErrorBoundaryFallback";
+import { Colors } from "@/constants/colors";
 import "../global.css";
 
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => void }) {
@@ -52,10 +52,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen name="day-view" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="settings"
-            options={{ headerShown: false, animation: "none" }}
-          />
+          <Stack.Screen name="settings" options={{ headerShown: false, animation: "none" }} />
           <Stack.Screen
             name="calorie-calculator"
             options={{

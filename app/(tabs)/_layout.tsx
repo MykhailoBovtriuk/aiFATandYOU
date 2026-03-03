@@ -2,9 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Tabs } from "expo-router";
 import { View } from "react-native";
-import { useIsWebDesktop } from "../../hooks/useIsWebDesktop";
-import { NavSidebar } from "../../components/NavSidebar";
-import { Colors } from "../../constants/colors";
+import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
+import { NavSidebar } from "@/components/NavSidebar";
+import { Colors } from "@/constants/colors";
 
 export default function TabLayout() {
   const isWebDesktop = useIsWebDesktop();
@@ -52,11 +52,7 @@ export default function TabLayout() {
                 transform: [{ scale: 1.15 }],
               }}
             >
-              <Ionicons
-                name="camera"
-                size={28}
-                color={focused ? Colors.darkCard : "white"}
-              />
+              <Ionicons name="camera" size={28} color={focused ? Colors.darkCard : "white"} />
             </View>
           ),
         }}
@@ -65,9 +61,7 @@ export default function TabLayout() {
         name="calendar"
         options={{
           title: "Calendar",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Ionicons name="calendar" size={size} color={color} />,
         }}
       />
     </Tabs>

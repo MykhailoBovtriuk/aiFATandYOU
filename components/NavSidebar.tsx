@@ -3,7 +3,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { usePathname, useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { Colors } from "../constants/colors";
+import { Colors } from "@/constants/colors";
 
 type NavItemConfig = {
   label: string;
@@ -82,9 +82,7 @@ function NavItem({ config, active, collapsed }: NavItemProps) {
       {config.renderIcon(active)}
       {!collapsed && (
         <Text
-          className={`text-[15px] font-medium ${
-            active ? "text-text-primary" : "text-text-muted"
-          }`}
+          className={`text-[15px] font-medium ${active ? "text-text-primary" : "text-text-muted"}`}
         >
           {config.label}
         </Text>

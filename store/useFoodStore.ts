@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
-import { DayMeals, FoodEntry } from '../types/food';
-import { isoToLocalDate, toLocalISODate } from '../utils/dates';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { DayMeals, FoodEntry } from "@/types/food";
+import { isoToLocalDate, toLocalISODate } from "@/utils/dates";
 
 interface FoodStore {
   // State
@@ -34,7 +34,7 @@ export const useFoodStore = create<FoodStore>()(
         const { entries } = get();
         const updated = { ...entries };
         for (const date of Object.keys(updated)) {
-          for (const meal of ['breakfast', 'lunch', 'dinner'] as (keyof DayMeals)[]) {
+          for (const meal of ["breakfast", "lunch", "dinner"] as (keyof DayMeals)[]) {
             if (updated[date][meal].some((e) => e.id === id)) {
               updated[date] = {
                 ...updated[date],
@@ -51,7 +51,7 @@ export const useFoodStore = create<FoodStore>()(
         const { entries } = get();
         const newEntries = { ...entries };
         for (const date of Object.keys(newEntries)) {
-          for (const meal of ['breakfast', 'lunch', 'dinner'] as (keyof DayMeals)[]) {
+          for (const meal of ["breakfast", "lunch", "dinner"] as (keyof DayMeals)[]) {
             const idx = newEntries[date][meal].findIndex((e) => e.id === id);
             if (idx !== -1) {
               const merged: FoodEntry = { ...newEntries[date][meal][idx], ...updated };
@@ -87,7 +87,7 @@ export const useFoodStore = create<FoodStore>()(
             carbs: tempEntry.carbs || 0,
             fats: tempEntry.fats || 0,
             weight: tempEntry.weight || 0,
-            mealType: tempEntry.mealType || 'Breakfast',
+            mealType: tempEntry.mealType || "Breakfast",
           };
 
           const dateKey = dateISO ?? toLocalISODate(new Date());
@@ -121,15 +121,15 @@ export const useFoodStore = create<FoodStore>()(
             isoToLocalDate(k).toDateString(),
             [...meals.breakfast, ...meals.lunch, ...meals.dinner].reduce(
               (sum, e) => sum + e.calories,
-              0
+              0,
             ),
-          ])
+          ]),
         );
       },
     }),
     {
-      name: 'food-storage',
+      name: "food-storage",
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );
