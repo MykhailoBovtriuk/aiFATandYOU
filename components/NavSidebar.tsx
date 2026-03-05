@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { usePathname, useRouter } from "expo-router";
-import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Colors } from "@/constants/colors";
+import { useFoodStore } from "@/store/useFoodStore";
 
 type NavItemConfig = {
   label: string;
@@ -93,7 +93,8 @@ function NavItem({ config, active, collapsed }: NavItemProps) {
 
 export function NavSidebar() {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = useFoodStore((s) => s.sidebarCollapsed);
+  const setCollapsed = useFoodStore((s) => s.setSidebarCollapsed);
 
   return (
     <View
