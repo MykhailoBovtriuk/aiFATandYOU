@@ -37,9 +37,12 @@ export function DayItem({
         className="w-10 h-10 rounded-full items-center justify-center"
         style={{ borderWidth, borderColor }}
       >
-        {hasData && isOverLimit && <Ionicons name="close" size={16} color={Colors.error} />}
-        {hasData && !isOverLimit && (
-          <Ionicons name="checkmark" size={16} color={Colors.accentGreen} />
+        {hasData && (
+          <Ionicons
+            name={isOverLimit ? "close" : "checkmark"}
+            size={16}
+            color={isOverLimit ? Colors.error : Colors.accentGreen}
+          />
         )}
       </View>
 

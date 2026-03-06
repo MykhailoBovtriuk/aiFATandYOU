@@ -61,30 +61,9 @@ export default function MealDetailScreen() {
       </SafeAreaView>
 
       {loading && (
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(10,10,26,0.85)",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 10,
-          }}
-        >
+        <View className="absolute inset-0 items-center justify-center z-10 bg-dark-bg/85">
           <ActivityIndicator size="large" color={Colors.accentGreen} />
-          <Text
-            style={{
-              color: Colors.textPrimary,
-              marginTop: 16,
-              fontSize: 16,
-              fontWeight: "600",
-            }}
-          >
-            Analyzing food...
-          </Text>
+          <Text className="text-text-primary mt-4 text-base font-semibold">Analyzing food...</Text>
         </View>
       )}
     </View>

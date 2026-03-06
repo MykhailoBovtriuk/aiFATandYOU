@@ -7,6 +7,7 @@ import { Asset } from "expo-asset";
 import { analyzeImage } from "@/services/gemini";
 import { useFoodStore } from "@/store/useFoodStore";
 import { getMealPeriodFromHour } from "@/utils/dates";
+import { navigateToError } from "@/utils/errors";
 
 export default function CameraTab() {
   const { scan, loading } = useCameraScan();
@@ -23,14 +24,8 @@ export default function CameraTab() {
       const mealType = getMealPeriodFromHour(new Date().getHours());
       setTempEntry({ ...data, mealType });
       router.push({ pathname: "/review", params: { imageUri: asset.localUri! } });
-    } catch (e: any) {
-      router.push({
-        pathname: "/error" as any,
-        params: {
-          message: "Could not connect to Gemini.",
-          response: e?.message ?? String(e),
-        },
-      });
+    } catch (e) {
+      navigateToError(router, "Could not connect to Gemini.", e);
     } finally {
       setTesting(false);
     }

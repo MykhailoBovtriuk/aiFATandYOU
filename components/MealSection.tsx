@@ -1,9 +1,10 @@
-import * as Haptics from "expo-haptics";
-import { Platform, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "@/constants/colors";
 import { FoodEntry } from "@/types/food";
 import { FoodItemRow } from "@/components/FoodItemRow";
 import { MealIcon } from "@/components/MealIcon";
+import { sumMacros } from "@/utils/food";
+import { impact } from "@/utils/haptics";
 
 interface MealSectionProps {
   mealType: string;
@@ -26,10 +27,12 @@ export function MealSection({
   expanded,
   scale = 1,
 }: MealSectionProps) {
-  const totalCalories = entries.reduce((sum, e) => sum + e.calories, 0);
-  const totalProtein = entries.reduce((sum, e) => sum + e.protein, 0);
-  const totalCarbs = entries.reduce((sum, e) => sum + e.carbs, 0);
-  const totalFats = entries.reduce((sum, e) => sum + e.fats, 0);
+  const {
+    calories: totalCalories,
+    protein: totalProtein,
+    carbs: totalCarbs,
+    fats: totalFats,
+  } = sumMacros(entries);
 
   return (
     <View
@@ -38,7 +41,7 @@ export function MealSection({
     >
       <TouchableOpacity
         onPress={() => {
-          if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          impact();
           onHeaderPress();
         }}
         className="flex-row items-center justify-between p-4"
@@ -55,7 +58,7 @@ export function MealSection({
         <TouchableOpacity
           onPress={(e) => {
             e.stopPropagation?.();
-            if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            impact();
             onAddPress();
           }}
           className="w-8 h-8 rounded-full items-center justify-center"

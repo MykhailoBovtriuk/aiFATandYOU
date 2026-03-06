@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { findEntryLocation } from "@/store/helpers";
 import { DayMeals, FoodEntry } from "@/types/food";
 import { isoToLocalDate, toLocalISODate } from "@/utils/dates";
 
@@ -37,44 +38,31 @@ export const useFoodStore = create<FoodStore>()(
       navSource: "/",
 
       deleteEntry: (id) => {
-        const { entries } = get();
-        const updated = { ...entries };
-        for (const date of Object.keys(updated)) {
-          for (const meal of ["breakfast", "lunch", "dinner"] as (keyof DayMeals)[]) {
-            if (updated[date][meal].some((e) => e.id === id)) {
-              updated[date] = {
-                ...updated[date],
-                [meal]: updated[date][meal].filter((e) => e.id !== id),
-              };
-              set({ entries: updated });
-              return;
-            }
-          }
-        }
+        const loc = findEntryLocation(get().entries, id);
+        if (!loc) return;
+        const entries = { ...get().entries };
+        entries[loc.dateKey] = {
+          ...entries[loc.dateKey],
+          [loc.mealKey]: entries[loc.dateKey][loc.mealKey].filter((e) => e.id !== id),
+        };
+        set({ entries });
       },
 
       updateEntry: (id, updated) => {
-        const { entries } = get();
-        const newEntries = { ...entries };
-        for (const date of Object.keys(newEntries)) {
-          for (const meal of ["breakfast", "lunch", "dinner"] as (keyof DayMeals)[]) {
-            const idx = newEntries[date][meal].findIndex((e) => e.id === id);
-            if (idx !== -1) {
-              const merged: FoodEntry = { ...newEntries[date][meal][idx], ...updated };
-              const newMealKey = merged.mealType.toLowerCase() as keyof DayMeals;
-              newEntries[date] = {
-                ...newEntries[date],
-                [meal]: newEntries[date][meal].filter((e) => e.id !== id),
-              };
-              newEntries[date] = {
-                ...newEntries[date],
-                [newMealKey]: [...newEntries[date][newMealKey], merged],
-              };
-              set({ entries: newEntries, tempEntry: null });
-              return;
-            }
-          }
-        }
+        const loc = findEntryLocation(get().entries, id);
+        if (!loc) return;
+        const entries = { ...get().entries };
+        const merged: FoodEntry = { ...entries[loc.dateKey][loc.mealKey][loc.index], ...updated };
+        const newMealKey = merged.mealType.toLowerCase() as keyof DayMeals;
+        entries[loc.dateKey] = {
+          ...entries[loc.dateKey],
+          [loc.mealKey]: entries[loc.dateKey][loc.mealKey].filter((e) => e.id !== id),
+        };
+        entries[loc.dateKey] = {
+          ...entries[loc.dateKey],
+          [newMealKey]: [...entries[loc.dateKey][newMealKey], merged],
+        };
+        set({ entries, tempEntry: null });
       },
 
       setTempEntry: (entry) => set({ tempEntry: entry }),

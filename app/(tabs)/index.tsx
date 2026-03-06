@@ -1,126 +1,62 @@
 import { MealList } from "@/components/MealList";
 import { TodayCard } from "@/components/TodayCard";
 import { WebSidebar } from "@/components/WebSidebar";
-import { createEmptyEntry } from "@/constants/meals";
+import { DesktopResponsiveRow } from "@/components/layout/DesktopResponsiveRow";
 import { useActiveMealPeriod } from "@/hooks/useActiveMealPeriod";
+import { useAddMeal } from "@/hooks/useAddMeal";
 import { useEditEntry } from "@/hooks/useEditEntry";
 import { useExpandedMeals } from "@/hooks/useExpandedMeals";
-import { useIsWebDesktop } from "@/hooks/useIsWebDesktop";
 import { useFoodStore } from "@/store/useFoodStore";
-import { FoodEntry } from "@/types/food";
-import { groupEntriesByMeal } from "@/utils/food";
-import { useRouter } from "expo-router";
+import { groupEntriesByMeal, sumMacros } from "@/utils/food";
 import { useState } from "react";
-import { toLocalISODate } from "@/utils/dates";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Dashboard() {
-  const router = useRouter();
-  const {
-    getEntriesForDate,
-    getDatesWithEntries,
-    deleteEntry,
-    setTempEntry,
-    setNavSource,
-    getCaloriesPerDate,
-    calorieLimit,
-  } = useFoodStore();
+  const { getEntriesForDate, getDatesWithEntries, deleteEntry, getCaloriesPerDate, calorieLimit } =
+    useFoodStore();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { activeMealType, scaleFactors } = useActiveMealPeriod(selectedDate);
   const { expandedMeals, toggleMeal } = useExpandedMeals(activeMealType);
-
-  const isWebDesktop = useIsWebDesktop();
-
-  const caloriesPerDate = getCaloriesPerDate();
-
   const dateEntries = getEntriesForDate(selectedDate);
-  const datesWithEntries = getDatesWithEntries();
-
+  const totals = sumMacros(dateEntries);
   const groupedEntries = groupEntriesByMeal(dateEntries);
 
-  const totals = dateEntries.reduce(
-    (acc, item) => ({
-      calories: acc.calories + item.calories,
-      protein: acc.protein + item.protein,
-      carbs: acc.carbs + item.carbs,
-      fats: acc.fats + item.fats,
-    }),
-    { calories: 0, protein: 0, carbs: 0, fats: 0 },
-  );
-
   const handleEditEntry = useEditEntry("/");
+  const { onEmptyHeaderPress, onAddPress } = useAddMeal("/", selectedDate);
 
   return (
-    <View className="flex-1 bg-dark-bg">
-      <View
-        style={{
-          flex: 1,
-          ...(isWebDesktop
-            ? {
-                flexDirection: "row",
-                alignSelf: "center",
-                width: "100%",
-                maxWidth: 1024,
-                gap: 24,
-              }
-            : {}),
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <SafeAreaView className="flex-1" edges={["bottom"]}>
-            <ScrollView className="px-5 pt-4">
-              <TodayCard
-                selectedDate={selectedDate}
-                onSelectDate={setSelectedDate}
-                datesWithEntries={datesWithEntries}
-                caloriesPerDate={caloriesPerDate}
-                {...totals}
-              />
-
-              <MealList
-                groupedEntries={groupedEntries}
-                expandedMeals={expandedMeals}
-                toggleMeal={toggleMeal}
-                onEmptyHeaderPress={(mealType) => {
-                  setTempEntry(createEmptyEntry(mealType as FoodEntry["mealType"]));
-                  setNavSource("/");
-                  router.push({
-                    pathname: "/review",
-                    params: { date: toLocalISODate(selectedDate) },
-                  });
-                }}
-                onAddPress={(mealType) => {
-                  setTempEntry(createEmptyEntry(mealType as FoodEntry["mealType"]));
-                  setNavSource("/");
-                  router.push({
-                    pathname: "/review",
-                    params: { date: toLocalISODate(selectedDate) },
-                  });
-                }}
-                onDeleteEntry={deleteEntry}
-                onEditEntry={handleEditEntry}
-                scaleFactors={scaleFactors as Record<string, number>}
-              />
-
-              <View className="h-6" />
-            </ScrollView>
-          </SafeAreaView>
+    <DesktopResponsiveRow
+      sidebar={
+        <View className="px-5 pt-4" style={{ width: 300 }}>
+          <WebSidebar {...totals} calorieLimit={calorieLimit} />
         </View>
-        {isWebDesktop && (
-          <>
-            <View className="px-5 pt-4" style={{ width: 300 }}>
-              <WebSidebar
-                calories={totals.calories}
-                protein={totals.protein}
-                carbs={totals.carbs}
-                fats={totals.fats}
-                calorieLimit={calorieLimit}
-              />
-            </View>
-          </>
-        )}
-      </View>
-    </View>
+      }
+    >
+      <SafeAreaView className="flex-1" edges={["bottom"]}>
+        <ScrollView className="px-5 pt-4">
+          <TodayCard
+            selectedDate={selectedDate}
+            onSelectDate={setSelectedDate}
+            datesWithEntries={getDatesWithEntries()}
+            caloriesPerDate={getCaloriesPerDate()}
+            {...totals}
+          />
+
+          <MealList
+            groupedEntries={groupedEntries}
+            expandedMeals={expandedMeals}
+            toggleMeal={toggleMeal}
+            onEmptyHeaderPress={onEmptyHeaderPress}
+            onAddPress={onAddPress}
+            onDeleteEntry={deleteEntry}
+            onEditEntry={handleEditEntry}
+            scaleFactors={scaleFactors as Record<string, number>}
+          />
+
+          <View className="h-6" />
+        </ScrollView>
+      </SafeAreaView>
+    </DesktopResponsiveRow>
   );
 }

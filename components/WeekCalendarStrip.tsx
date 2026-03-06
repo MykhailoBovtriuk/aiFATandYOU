@@ -1,6 +1,6 @@
-import { View } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { DayItem } from './DayItem';
+import { View } from "react-native";
+import { DayItem } from "./DayItem";
+import { impact } from "@/utils/haptics";
 
 interface WeekCalendarStripProps {
   selectedDate: Date;
@@ -9,7 +9,7 @@ interface WeekCalendarStripProps {
   caloriesPerDate: Record<string, number>;
 }
 
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function getWeekDates(referenceDate: Date): Date[] {
   const day = referenceDate.getDay();
@@ -56,7 +56,7 @@ export function WeekCalendarStrip({
             hasData={hasData}
             calories={calories}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              impact();
               onSelectDate(date);
             }}
           />

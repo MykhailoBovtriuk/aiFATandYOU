@@ -1,5 +1,5 @@
-import * as Haptics from "expo-haptics";
 import { Text, TouchableOpacity, View } from "react-native";
+import { impact, notify } from "@/utils/haptics";
 import { FoodEntry } from "@/types/food";
 
 interface FoodItemProps {
@@ -17,11 +17,11 @@ export function FoodItemRow({ item, onDelete, onPress }: FoodItemProps) {
   return (
     <TouchableOpacity
       onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        impact();
         onPress(item);
       }}
       onLongPress={() => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        notify();
         onDelete(item.id);
       }}
       className="bg-dark-surface p-3.5 rounded-xl mb-2"
