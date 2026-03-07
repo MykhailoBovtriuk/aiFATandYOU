@@ -49,3 +49,4 @@ yarn-error.*
 # Claude
 .claude/
 CLAUDE.md
+/ai

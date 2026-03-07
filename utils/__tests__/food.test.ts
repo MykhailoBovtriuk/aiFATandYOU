@@ -42,35 +42,23 @@ describe("groupEntriesByMeal", () => {
 });
 
 describe("getDayBorderColor", () => {
-  it("returns green for past day with data and under limit", () => {
-    expect(getDayBorderColor(true, false, true, false)).toBe(GREEN);
+  it("returns green for day with data under limit", () => {
+    expect(getDayBorderColor(true, false)).toBe(GREEN);
   });
 
-  it("returns red for past day with no data", () => {
-    expect(getDayBorderColor(true, false, false, false)).toBe(RED);
+  it("returns red for day with data over limit", () => {
+    expect(getDayBorderColor(true, true)).toBe(RED);
   });
 
-  it("returns red for past day over limit", () => {
-    expect(getDayBorderColor(true, false, true, true)).toBe(RED);
+  it("returns default color when no data", () => {
+    expect(getDayBorderColor(false, false)).toBe(DARK_BORDER);
   });
 
-  it("returns green for today with data and under limit", () => {
-    expect(getDayBorderColor(false, true, true, false)).toBe(GREEN);
+  it("returns default color when no data even if over limit", () => {
+    expect(getDayBorderColor(false, true)).toBe(DARK_BORDER);
   });
 
-  it("returns red for today over limit", () => {
-    expect(getDayBorderColor(false, true, true, true)).toBe(RED);
-  });
-
-  it("returns green for today with no data (default today behavior)", () => {
-    expect(getDayBorderColor(false, true, false, false)).toBe(GREEN);
-  });
-
-  it("returns default color for future day", () => {
-    expect(getDayBorderColor(false, false, false, false)).toBe(DARK_BORDER);
-  });
-
-  it("accepts custom default color for future days", () => {
-    expect(getDayBorderColor(false, false, false, false, "#AABBCC")).toBe("#AABBCC");
+  it("accepts custom default color", () => {
+    expect(getDayBorderColor(false, false, "#AABBCC")).toBe("#AABBCC");
   });
 });

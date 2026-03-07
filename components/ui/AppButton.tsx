@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, Text, TouchableOpacity, ViewStyle } from "react-native";
+import { Colors } from "@/constants/colors";
 
 interface AppButtonProps {
   label: string;
@@ -24,8 +25,7 @@ export function AppButton({
   textClassName = "",
   style,
 }: AppButtonProps) {
-  const variantClass =
-    variant === "danger" ? "bg-red-600" : "border border-white";
+  const variantClass = variant === "danger" ? "bg-red-600" : "border border-white";
 
   return (
     <TouchableOpacity
@@ -36,13 +36,11 @@ export function AppButton({
       style={style}
     >
       {loading ? (
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color={Colors.textPrimary} />
       ) : icon ? (
-        <Ionicons name={icon} size={20} color="#fff" />
+        <Ionicons name={icon} size={20} color={Colors.textPrimary} />
       ) : null}
-      <Text className={`text-white text-xl font-bold ${textClassName}`}>
-        {label}
-      </Text>
+      <Text className={`text-white text-xl font-bold ${textClassName}`}>{label}</Text>
     </TouchableOpacity>
   );
 }

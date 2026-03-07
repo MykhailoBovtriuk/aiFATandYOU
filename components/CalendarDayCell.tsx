@@ -25,16 +25,11 @@ export function CalendarDayCell({
 
   const isOtherMonth = state === "disabled";
   const isToday = date.dateString === todayISO;
-  const isPast = date.dateString < todayISO;
-  const calories = caloriesPerDate[date.dateString] ?? 0;
-  const hasData = date.dateString in caloriesPerDate;
+  const dateKey = new Date(date.dateString + "T00:00:00").toDateString();
+  const calories = caloriesPerDate[dateKey] ?? 0;
+  const hasData = dateKey in caloriesPerDate;
   const isOverLimit = calories > calorieLimit;
-  const borderColor = getDayBorderColor(
-    isPast && !isOtherMonth,
-    isToday && !isOtherMonth,
-    hasData,
-    isOverLimit,
-  );
+  const borderColor = getDayBorderColor(hasData, isOverLimit);
 
   return (
     <TouchableOpacity
